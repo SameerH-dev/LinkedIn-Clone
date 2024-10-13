@@ -2,7 +2,7 @@ import createHttpError from "http-errors";
 import { DotEnvConfig } from "../config/config.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import User from "../models/user.model.js";
-import { asyncHandler } from "../routes/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessAndRefereshTokens, options } from "../utils/generateSerateToken.js";
 
 const registerController = asyncHandler(async (req, res) => {
@@ -58,11 +58,38 @@ const registerController = asyncHandler(async (req, res) => {
 });
 
 const loginController = asyncHandler(async (req, res) => {
-  res.json({ message: "Login Controller" });
+  const { username, email, password } = req.body;
+
+  const user = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Username or Email does not exist" });
+  }
+
+  const validPassword = await user.isPasswordCorrect(password);
+
+  if (!validPassword) {
+    return res.status(400).json({ message: "Invalid Password" });
+  }
+
+  const { secretToken } = await generateAccessAndRefereshTokens(user._id);
+
+  const loginUser = await User.findById(user._id).select("-password");
+
+  if (!loginUser) {
+    return res.status(500).json({ message: "Something went wrong while logging in the user" });
+  }
+
+  return res
+    .status(200)
+    .cookie("token", secretToken, options)
+    .json({ message: "Login User Successfully!!!", user: loginUser });
 });
 
 const logoutController = asyncHandler(async (req, res) => {
-  res.json({ message: "Logout Controller" });
+  return res.status(200).clearCookie("token", options).json({ message: "Logout User Successfully!!!" });
 });
 
 export { loginController, logoutController, registerController };

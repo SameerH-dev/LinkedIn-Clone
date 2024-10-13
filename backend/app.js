@@ -8,7 +8,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "*",
+    origin: DotEnvConfig.cors,
   }),
 );
 app.use(express.urlencoded({ extended: true }));
@@ -19,12 +19,12 @@ app.use(
 );
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.json({ message: "Hello World" });
-});
-
+// * Import Routes
 import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import { DotEnvConfig } from "./config/config.js";
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
 
 export default app;
