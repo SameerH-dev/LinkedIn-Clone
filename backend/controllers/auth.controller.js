@@ -1,4 +1,6 @@
 import createHttpError from "http-errors";
+import { DotEnvConfig } from "../config/config.js";
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import User from "../models/user.model.js";
 import { asyncHandler } from "../routes/asyncHandler.js";
 import { generateAccessAndRefereshTokens, options } from "../utils/generateSerateToken.js";
@@ -40,7 +42,15 @@ const registerController = asyncHandler(async (req, res) => {
 
     res.status(201).cookie("token", secretToken, options).json({ message: "User Registered Successfully" });
 
-    //TODO: send Welcome Email to the user
+    //* send Welcome Email to the user
+    const profileUrl = DotEnvConfig.clientUrl + "/profile/" + createdUser.username;
+
+    try {
+      await sendWelcomeEmail(createdUser.email, createdUser.username, profileUrl);
+    } catch (EmailError) {
+      const errorMessage = createHttpError(500, "Error while sending welcome email", EmailError);
+      throw errorMessage;
+    }
   } catch (error) {
     const errorMessage = createHttpError(500, "Error while registering user", error);
     throw errorMessage;

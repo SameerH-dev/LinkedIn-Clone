@@ -8,6 +8,7 @@ const _config = {
   port: process.env.PORT,
   cors: process.env.CORS,
   nodeEnv: process.env.NODE_ENV,
+  clientUrl: process.env.CLIENT_URL,
   mongodb: {
     uri: process.env.MONGODB_URI,
     name: process.env.MONGODB_NAME,
@@ -20,6 +21,11 @@ const _config = {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
+  mailtrap: {
+    mailtrapToken: process.env.MAILTRAP_TOKEN,
+    mailtrapEmail: process.env.MAILTRAP_EMAIL,
+    mailtrapEmailName: process.env.MAILTRAP_EMAIL_NAME,
   },
 };
 
