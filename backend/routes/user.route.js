@@ -4,6 +4,7 @@ import { jwtProtectedRoute } from "../middlewares/auth.middleware.js";
 
 const userRoutes = Router();
 
+// Protected Routes
 userRoutes.get("/me", jwtProtectedRoute, getCurrentUser);
 
 export default userRoutes;
