@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import { DotEnvConfig } from "./config/config.js";
 
 const app = express();
 
@@ -22,7 +23,6 @@ app.use(cookieParser());
 // * Import Routes
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
-import { DotEnvConfig } from "./config/config.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
